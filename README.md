@@ -1,24 +1,17 @@
-# tech-x
+# EDUX
 
-## Project setup
+## 安装依赖
 ```
 yarn install
 ```
 
-### Compiles and hot-reloads for development
+### 生成EXE
+生成的安装包在/dist_electron里
 ```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
+yarn electron:buildWin
 ```
 
-### Lints and fixes files
+### 调试
 ```
-yarn lint
+yarn electron:serve
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
