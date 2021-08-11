@@ -59,29 +59,29 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   name: "UploadVideo",
   data: () => ({
-    files: []
+    files: [],
   }),
   computed: {
     ...mapGetters({
-      output: "yoloface/getOutput"
-    })
+      output: "yoloface/getOutput",
+    }),
   },
   methods: {
     ...mapActions({
-      addVideo: "yoloface/addVideo"
+      addVideo: "yoloface/addVideo",
     }),
     upload() {
       this.files.forEach((item) => {
         this.addVideo(item);
       });
-    }
+    },
   },
   props: {
     open: {
       type: Boolean,
-      defaults: () => false
-    }
-  }
+      defaults: () => false,
+    },
+  },
 };
 </script>
 

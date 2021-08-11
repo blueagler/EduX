@@ -35,7 +35,9 @@
             </v-avatar>
             <h3 class="my-2">{{ getName }}</h3>
             <v-divider class="my-3"></v-divider>
-            <v-btn class="nd" depressed rounded text @click="logout"> 退出登录</v-btn>
+            <v-btn class="nd" depressed rounded text @click="logout">
+              退出登录</v-btn
+            >
           </div>
         </v-list-item-content>
       </v-card>
@@ -55,23 +57,23 @@ export default {
         {
           path: "/",
           text: "主页",
-          icon: "mdi-home"
-        }
-      ]
-    }
+          icon: "mdi-home",
+        },
+      ],
+    },
   },
   methods: {
     ...mapActions({
-      logout: "auth/logout"
-    })
+      logout: "auth/logout",
+    }),
   },
   computed: {
     ...mapGetters({
       isLogin: "auth/isLogin",
       getName: "auth/getName",
-      isProgressBarActive: "progressBar/isProgressBarActive"
-    })
-  }
+      isProgressBarActive: "progressBar/isProgressBarActive",
+    }),
+  },
 };
 </script>
 
@@ -83,7 +85,7 @@ export default {
 }
 
 .nd {
-  -webkit-app-region: no-drag
+  -webkit-app-region: no-drag;
 }
 
 @supports (-webkit-touch-callout: none) {

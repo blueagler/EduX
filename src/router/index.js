@@ -13,8 +13,8 @@ const routes = [
       needAuth: false,
       showHeader: true,
       showNavigation: true,
-      title: "主页"
-    }
+      title: "主页",
+    },
   },
   {
     path: "/about",
@@ -25,8 +25,8 @@ const routes = [
       needAuth: false,
       showHeader: true,
       showNavigation: true,
-      title: "关于"
-    }
+      title: "关于",
+    },
   },
   {
     path: "/project",
@@ -37,8 +37,8 @@ const routes = [
       needAuth: true,
       showHeader: true,
       showNavigation: true,
-      title: "项目管理"
-    }
+      title: "项目管理",
+    },
   },
   {
     path: "/report",
@@ -49,15 +49,15 @@ const routes = [
       needAuth: true,
       showHeader: true,
       showNavigation: true,
-      title: "报告"
-    }
-  }
+      title: "报告",
+    },
+  },
 ];
 
 const router = new VueRouter({
   mode: "hash",
   base: process.env.BASE_URL,
-  routes
+  routes,
 });
 router.beforeEach((to, from, next) => {
   const isLogin = store.getters["auth/isLogin"];

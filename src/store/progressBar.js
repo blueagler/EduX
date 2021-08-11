@@ -1,12 +1,12 @@
 export default {
   namespaced: true,
   state: {
-    active: false
+    active: false,
   },
   mutations: {
     SET_STATE(state, value) {
       state.active = value;
-    }
+    },
   },
   actions: {
     async startProgressBar({ commit }) {
@@ -14,9 +14,9 @@ export default {
     },
     async stopProgressBar({ commit }) {
       commit("SET_STATE", false);
-    }
+    },
   },
   getters: {
-    isProgressBarActive: (state) => state.active
-  }
+    isProgressBarActive: (state) => state.active,
+  },
 };

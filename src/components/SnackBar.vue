@@ -27,9 +27,9 @@ export default {
   name: "Snackbar",
   computed: {
     ...mapState({
-      snackbars: (state) => state.snackbar.snackbars
-    })
-  }
+      snackbars: (state) => state.snackbar.snackbars,
+    }),
+  },
 };
 </script>
 <style lang="scss" scoped>

@@ -7,7 +7,7 @@ const progressFile = (name) =>
 
 function throttle(fn, delay) {
   let previous = 0;
-  return function() {
+  return function () {
     let _this = this;
     let args = arguments;
     let now = new Date();
@@ -23,7 +23,7 @@ export default {
   state: {
     videoList: [],
     analysing: null,
-    output: ""
+    output: "",
   },
   mutations: {
     SET_VIDEO_LIST(state, value) {
@@ -37,7 +37,7 @@ export default {
     },
     APPEND_OUTPUT(state, value) {
       state.output += `</br>${value}`;
-    }
+    },
   },
   actions: {
     async addVideo({ commit, getters, dispatch }, file) {
@@ -47,7 +47,7 @@ export default {
         path: file.path,
         complete: false,
         fail: false,
-        progress: 0
+        progress: 0,
       });
       commit("SET_VIDEO_LIST", videoList);
       dispatch("startAnalysis");
@@ -61,7 +61,7 @@ export default {
       function success() {
         videoList[
           videoList.findIndex((el) => el["name"] === waitList[0]["name"])
-          ]["complete"] = true;
+        ]["complete"] = true;
         commit("SET_VIDEO_LIST", videoList);
         commit("SET_ANALYSING", null);
         setTimeout(() => {
@@ -72,7 +72,7 @@ export default {
       function error() {
         videoList[
           videoList.findIndex((el) => el["name"] === waitList[0]["name"])
-          ]["fail"] = true;
+        ]["fail"] = true;
         commit("SET_VIDEO_LIST", videoList);
         commit("SET_ANALYSING", null);
         setTimeout(() => {
@@ -84,7 +84,7 @@ export default {
         // console.log(waitList);
         let yoloface = spawn("python", [
           `${path.join(process.cwd(), "/resources/yoloface/yoloface.py")}`,
-          `--video=${waitList[0]["path"]}`
+          `--video=${waitList[0]["path"]}`,
         ]);
         // commit(
         //   "APPEND_OUTPUT",
@@ -97,7 +97,7 @@ export default {
             fs.readFile(
               progressFile(waitList[0]["name"]),
               "utf8",
-              function(err, data) {
+              function (err, data) {
                 if (err) {
                   console.log(err);
                 } else {
@@ -105,7 +105,7 @@ export default {
                     videoList.findIndex(
                       (el) => el["name"] === waitList[0]["name"]
                     )
-                    ]["progress"] = parseFloat(data);
+                  ]["progress"] = parseFloat(data);
                 }
               }
             );
@@ -125,11 +125,11 @@ export default {
           commit("APPEND_OUTPUT", `child process exited with code ${code}`);
         });
       }
-    }
+    },
   },
   getters: {
     getVideoList: (state) => state.videoList,
     getAnalysing: (state) => state.analysing,
-    getOutput: (state) => state.output
-  }
+    getOutput: (state) => state.output,
+  },
 };

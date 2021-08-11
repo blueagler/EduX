@@ -127,45 +127,45 @@ export default {
   computed: {
     ...mapState({
       showLogin: (state) => state.auth.showLogin,
-      redirectUrl: (state) => state.auth.loginRedirect
-    })
+      redirectUrl: (state) => state.auth.loginRedirect,
+    }),
   },
   data: () => ({
     loginForm: {
       name: "",
       password: "",
-      remember: false
+      remember: false,
     },
     registerForm: {
       name: "",
       password: "",
-      remember: false
+      remember: false,
     },
     submitWait: false,
-    tab: null
+    tab: null,
   }),
   methods: {
     ...mapActions({
       login: "auth/login",
-      snackbar: "snackbar/setSnackbar"
+      snackbar: "snackbar/setSnackbar",
     }),
     submit(type) {
       if (this.submitWait) return;
       let [json, postAction] = [{}, ""];
       const actions = {
         login: () => ([json, postAction] = [this.loginForm, "User"]),
-        register: () => ([json, postAction] = [this.registerForm, "Register"])
+        register: () => ([json, postAction] = [this.registerForm, "Register"]),
       };
       actions[type]();
       this.submitWait = true;
       this.login({
         action: postAction,
-        ...json
+        ...json,
       })
         .then(() => {
           this.snackbar({
             color: "success",
-            text: "登陆成功"
+            text: "登陆成功",
           });
           this.submitWait = false;
           if (this.redirectUrl) {
@@ -176,11 +176,11 @@ export default {
           this.submitWait = false;
           this.snackbar({
             color: "error",
-            text: msg
+            text: msg,
           });
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

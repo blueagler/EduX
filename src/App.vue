@@ -23,8 +23,8 @@ export default {
   name: "App",
   methods: {
     ...mapMutations({
-      setVideoList: "yoloface/SET_VIDEO_LIST"
-    })
+      setVideoList: "yoloface/SET_VIDEO_LIST",
+    }),
   },
   mounted() {
     if (localStorage.getItem("videoList")) {
@@ -36,32 +36,32 @@ export default {
       {
         path: "/",
         text: "主页",
-        icon: "mdi-home"
+        icon: "mdi-home",
       },
       {
         path: "/project",
         text: "分析中心",
-        icon: "mdi-cloud"
+        icon: "mdi-cloud",
       },
       {
         path: "/about",
         text: "关于我们",
-        icon: "mdi-account-supervisor"
+        icon: "mdi-account-supervisor",
       },
       {
         path: "/report",
         text: "报告test",
-        icon: "mdi-account-supervisor"
-      }
-    ])
+        icon: "mdi-account-supervisor",
+      },
+    ]),
   }),
   components: {
     Login: () => import(/* webpackChunkName: "login" */ "@/components/Login"),
     SnackBar: () =>
       import(/* webpackChunkName: "snackbar" */ "@/components/SnackBar"),
     Header,
-    BottomNavigation
-  }
+    BottomNavigation,
+  },
 };
 </script>
 <style lang="scss">

@@ -17,11 +17,11 @@ export default {
         {
           path: "/",
           text: "主页",
-          icon: "mdi-home"
-        }
-      ]
-    }
-  }
+          icon: "mdi-home",
+        },
+      ],
+    },
+  },
 };
 </script>
 

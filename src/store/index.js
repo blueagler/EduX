@@ -15,6 +15,6 @@ export default new Vuex.Store({
     progressBar,
     auth,
     snackbar,
-    yoloface
-  }
+    yoloface,
+  },
 });

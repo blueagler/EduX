@@ -2,7 +2,7 @@ module.exports = {
   transpileDependencies: ["vuetify"],
   productionSourceMap: false,
   configureWebpack: {
-    target: "node-webkit"
+    target: "node-webkit",
   },
   pluginOptions: {
     electronBuilder: {
@@ -10,19 +10,17 @@ module.exports = {
         extraResources: [
           {
             from: "./yoloface/",
-            to: "yoloface"
-          }
+            to: "yoloface",
+          },
         ],
         appId: "com.blueagle.edux",
         win: {
           target: [
             {
               target: "nsis",
-              arch: [
-                "x64"
-              ]
-            }
-          ]
+              arch: ["x64"],
+            },
+          ],
         },
         nsis: {
           oneClick: false,
@@ -30,9 +28,9 @@ module.exports = {
           allowElevation: true,
           allowToChangeInstallationDirectory: true,
           createDesktopShortcut: true,
-          createStartMenuShortcut: true
-        }
-      }
-    }
-  }
+          createStartMenuShortcut: true,
+        },
+      },
+    },
+  },
 };

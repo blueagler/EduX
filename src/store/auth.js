@@ -5,7 +5,7 @@ export default {
     loginRedirect: "",
     isLogin: false,
     name: "name",
-    token: "token"
+    token: "token",
   },
   mutations: {
     setUser(state, { name, token, remember }) {
@@ -29,7 +29,7 @@ export default {
         state.loginRedirect = data.redirect;
       }
       state.showLogin = data.value;
-    }
+    },
   },
   actions: {
     async login({ commit }, { name, password, remember }) {
@@ -40,7 +40,7 @@ export default {
             token: Number(
               Math.random().toString().substr(3, length) + Date.now()
             ).toString(36),
-            remember: remember
+            remember: remember,
           });
           resolve();
         } else {
@@ -56,11 +56,11 @@ export default {
     },
     async closeLogin({ commit }) {
       commit("setLogin", { value: false });
-    }
+    },
   },
   getters: {
     isLogin: (state) => state.isLogin,
     getName: (state) => state.name,
-    getToken: (state) => state.token
-  }
+    getToken: (state) => state.token,
+  },
 };

@@ -6,7 +6,7 @@
 export default {
   name: "Home",
   data: () => ({
-    ptOptions: Object.freeze()
-  })
+    ptOptions: Object.freeze(),
+  }),
 };
 </script>

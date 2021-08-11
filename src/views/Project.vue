@@ -162,16 +162,16 @@ export default {
       { key: "path", label: "路径" },
       { key: "complete", label: "完成" },
       { key: "fail", label: "失败" },
-      { key: "progress", label: "进度" }
-    ]
+      { key: "progress", label: "进度" },
+    ],
   }),
   computed: {
     ...mapGetters({
-      items: "yoloface/getVideoList"
+      items: "yoloface/getVideoList",
     }),
     numberOfPages() {
       return Math.ceil(this.items.length / this.itemsPerPage);
-    }
+    },
   },
   methods: {
     showReport(name) {
@@ -185,12 +185,12 @@ export default {
     },
     updateItemsPerPage(number) {
       this.itemsPerPage = number;
-    }
+    },
   },
   components: {
     UploadVideo: () =>
-      import(/* webpackChunkName: "upload_video" */ "@/components/UploadVideo")
-  }
+      import(/* webpackChunkName: "upload_video" */ "@/components/UploadVideo"),
+  },
 };
 </script>
 
