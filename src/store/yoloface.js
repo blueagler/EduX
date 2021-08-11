@@ -3,7 +3,7 @@ import path from "path";
 
 const fs = require("fs");
 const progressFile = (name) =>
-  `${path.join(process.cwd(), `/resources/yoloface/${name}.txt`)}`;
+  `${path.join(process.cwd(), `/resources/yoloface/output/${name}.txt`)}`;
 
 function throttle(fn, delay) {
   let previous = 0;
@@ -85,6 +85,7 @@ export default {
         let yoloface = spawn("python", [
           `${path.join(process.cwd(), "/resources/yoloface/yoloface.py")}`,
           `--video=${waitList[0]["path"]}`,
+          `--filename=${waitList[0]["name"]}`,
         ]);
         // commit(
         //   "APPEND_OUTPUT",

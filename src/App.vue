@@ -49,7 +49,7 @@ export default {
         icon: "mdi-account-supervisor",
       },
       {
-        path: "/report",
+        path: "/report/test",
         text: "报告test",
         icon: "mdi-account-supervisor",
       },
