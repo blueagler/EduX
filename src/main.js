@@ -1,6 +1,6 @@
 import Vue from "vue";
 import App from "./App.vue";
-import "./registerServiceWorker";
+// import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
@@ -15,3 +15,7 @@ new Vue({
   vuetify,
   render: (h) => h(App)
 }).$mount("#app");
+Object.filter = (obj, predicate) =>
+  Object.keys(obj)
+    .filter((key) => predicate(obj[key]))
+    .reduce((res, key) => ((res[key] = obj[key]), res), {});

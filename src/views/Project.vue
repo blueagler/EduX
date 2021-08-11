@@ -69,22 +69,31 @@
               </v-card-title>
 
               <v-divider></v-divider>
-
               <v-list dense>
-                <v-list-item v-for="(key, index) in filteredKeys" :key="index">
+                <v-list-item v-for="(key, index) in keys" :key="index">
                   <v-list-item-content
-                    :class="{ 'blue--text': sortBy === key }"
+                    :class="{ 'primary--text': sortBy === key.key }"
                   >
-                    {{ key }}:
+                    {{ key.label }}:
                   </v-list-item-content>
                   <v-list-item-content
-                    :class="{ 'blue--text': sortBy === key }"
+                    :class="{ 'primary--text': sortBy === key.key }"
                     class="align-end"
                   >
-                    {{ item[key.toLowerCase()] }}
+                    {{ item[key.key.toLowerCase()] }}
                   </v-list-item-content>
                 </v-list-item>
               </v-list>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  :disabled="!item.complete"
+                  text
+                  @click="showReport(item.name)"
+                >
+                  查看报告
+                </v-btn>
+              </v-card-actions>
             </v-card>
           </v-col>
         </v-row>
@@ -136,6 +145,8 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "Project",
   data: () => ({
@@ -146,55 +157,26 @@ export default {
     page: 1,
     itemsPerPage: 4,
     sortBy: "name",
-    keys: ["name", "uploadTime", "completeTime", "ID"],
-    items: [
-      {
-        name: "asdf",
-        uploadTime: "cekjwvbkv",
-        completeTime: "cbwjbvcke",
-        id: "vervrev"
-      },
-      {
-        name: "qwer",
-        uploadTime: "ckdwcbek",
-        completeTime: "cdwbvikbuv",
-        id: "vewrverv"
-      },
-      {
-        name: "zxcv",
-        uploadTime: "djwebco",
-        completeTime: "kfbwbvr",
-        id: "vewvwer"
-      },
-      {
-        name: "rtyu",
-        uploadTime: "kjwebcobcv",
-        completeTime: "hlibowe",
-        id: "wcfewfv"
-      },
-      {
-        name: "qazwsx",
-        uploadTime: "kjbckb",
-        completeTime: "pqiwqdol",
-        id: "cnlwne"
-      },
-      {
-        name: "werfds",
-        uploadTime: "ljqboeebi",
-        completeTime: "kqbwce",
-        id: "adnlwi"
-      }
+    keys: [
+      { key: "name", label: "视频名" },
+      { key: "path", label: "路径" },
+      { key: "complete", label: "完成" },
+      { key: "fail", label: "失败" },
+      { key: "progress", label: "进度" }
     ]
   }),
   computed: {
+    ...mapGetters({
+      items: "yoloface/getVideoList"
+    }),
     numberOfPages() {
       return Math.ceil(this.items.length / this.itemsPerPage);
-    },
-    filteredKeys() {
-      return this.keys.filter((key) => key !== "Name");
     }
   },
   methods: {
+    showReport(name) {
+      this.$router.push(`/report/${name}`);
+    },
     nextPage() {
       if (this.page + 1 <= this.numberOfPages) this.page += 1;
     },

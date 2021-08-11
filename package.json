@@ -7,7 +7,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "electron:build": "vue-cli-service electron:build",
-    "electron:buildWin": "vue-cli-service electron:build --w",
+    "electron:buildWin": "vue-cli-service electron:build --win --x64",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
@@ -16,7 +16,9 @@
   "dependencies": {
     "@mdi/font": "5.9.55",
     "apexcharts": "^3.27.3",
+    "child_process": "^1.0.2",
     "core-js": "^3.6.5",
+    "csvtojson": "^2.0.10",
     "register-service-worker": "^1.7.1",
     "roboto-fontface": "*",
     "vue": "^2.6.14",

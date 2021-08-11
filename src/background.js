@@ -14,8 +14,8 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 1200,
-    height: 900,
+    width: 599,
+    height: 1000,
     title: process.platform === "win32" ? "EduX" : "",
     titleBarStyle: "hiddenInset",
     frame: process.platform !== "win32",
@@ -23,11 +23,13 @@ async function createWindow() {
     hasShadow: process.platform !== "darwin",
     webPreferences: {
       webSecurity: false,
+      nodeIntegrationInWorker: true,
       nodeIntegration: true,
       enableRemoteModule: true,
       contextIsolation: false
     }
   });
+  win.webContents.openDevTools();
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode

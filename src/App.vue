@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app class="sb">
     <Header v-show="this.$route.meta['showHeader']" :navs="navs" />
     <v-main>
       <router-view />
@@ -17,9 +17,20 @@
 <script>
 import Header from "@/components/Header";
 import BottomNavigation from "@/components/BottomNavigation";
+import { mapMutations } from "vuex";
 
 export default {
   name: "App",
+  methods: {
+    ...mapMutations({
+      setVideoList: "yoloface/SET_VIDEO_LIST"
+    })
+  },
+  mounted() {
+    if (localStorage.getItem("videoList")) {
+      this.setVideoList(JSON.parse(localStorage.getItem("videoList")));
+    }
+  },
   data: () => ({
     navs: Object.freeze([
       {
@@ -36,6 +47,11 @@ export default {
         path: "/about",
         text: "关于我们",
         icon: "mdi-account-supervisor"
+      },
+      {
+        path: "/report",
+        text: "报告test",
+        icon: "mdi-account-supervisor"
       }
     ])
   }),
@@ -49,6 +65,9 @@ export default {
 };
 </script>
 <style lang="scss">
+::-webkit-scrollbar {
+  display: none;
+}
 @supports (-webkit-touch-callout: none) {
   .v-main {
     margin-top: env(safe-area-inset-top) !important;
