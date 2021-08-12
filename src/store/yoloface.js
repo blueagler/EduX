@@ -1,27 +1,18 @@
 const { spawn } = require("child_process");
 import path from "path";
 
-const fs = require("fs");
-const progressFile = (name) =>
-  `${path.join(process.cwd(), `/resources/yoloface/output/${name}.txt`)}`;
-
-function throttle(fn, delay) {
-  let previous = 0;
-  return function () {
-    let _this = this;
-    let args = arguments;
-    let now = new Date();
-    if (now - previous > delay) {
-      fn.apply(_this, args);
-      previous = now;
-    }
-  };
-}
-
 export default {
   namespaced: true,
   state: {
-    videoList: [],
+    videoList: [
+      {
+        name: "CV课堂实测",
+        path: "",
+        complete: true,
+        fail: false,
+        progress: 100,
+      },
+    ],
     analysing: null,
     output: "",
   },
@@ -62,6 +53,9 @@ export default {
         videoList[
           videoList.findIndex((el) => el["name"] === waitList[0]["name"])
         ]["complete"] = true;
+        videoList[
+          videoList.findIndex((el) => el["name"] === waitList[0]["name"])
+        ]["progress"] = 100;
         commit("SET_VIDEO_LIST", videoList);
         commit("SET_ANALYSING", null);
         setTimeout(() => {
@@ -81,41 +75,36 @@ export default {
       }
 
       if (!getters.getAnalysing && waitList.length > 0) {
-        // console.log(waitList);
-        let yoloface = spawn("python", [
-          `${path.join(process.cwd(), "/resources/yoloface/yoloface.py")}`,
-          `--video=${waitList[0]["path"]}`,
-          `--filename=${waitList[0]["name"]}`,
-        ]);
-        // commit(
-        //   "APPEND_OUTPUT",
-        //   `${path.join(process.cwd(), "/resources/yoloface/yoloface.py")}`
-        // );
-        // commit("APPEND_OUTPUT", `--video=${waitList[0]["path"]}`);
+        let yoloface = spawn(
+          "python",
+          [
+            `${path.join(process.cwd(), "/resources/yoloface/yoloface.py")}`,
+            `--video=${waitList[0]["path"]}`,
+            `--filename=${waitList[0]["name"]}`,
+          ],
+          {
+            cwd: `${path.join(process.cwd(), "/resources/yoloface")}`,
+          }
+        );
         yoloface.stdout.on("data", (data) => {
-          throttle(() => {
-            commit("SET_ANALYSING", waitList[0]["name"]);
-            fs.readFile(
-              progressFile(waitList[0]["name"]),
-              "utf8",
-              function (err, data) {
-                if (err) {
-                  console.log(err);
-                } else {
-                  videoList[
-                    videoList.findIndex(
-                      (el) => el["name"] === waitList[0]["name"]
-                    )
-                  ]["progress"] = parseFloat(data);
-                }
-              }
+          commit("SET_ANALYSING", waitList[0]["name"]);
+          if (data.toString().includes("progress:")) {
+            const progress = parseInt(
+              data.toString().substring(data.toString().length - 2)
             );
-          }, 1000);
+            console.log("Progress data", progress);
+            videoList[
+              videoList.findIndex((el) => el["name"] === waitList[0]["name"])
+            ]["progress"] = progress;
+            commit("SET_VIDEO_LIST", videoList);
+          }
           commit("APPEND_OUTPUT", `stdout: ${data}`);
         });
         yoloface.stderr.on("data", (data) => {
-          error();
-          commit("APPEND_OUTPUT", `stderr: ${data}`);
+          if (!data.toString().includes("cv::dnn")) {
+            error();
+            commit("APPEND_OUTPUT", `stderr: ${data}`);
+          }
         });
         yoloface.on("close", (code) => {
           if (code === 0) {

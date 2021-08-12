@@ -84,6 +84,10 @@
                   </v-list-item-content>
                 </v-list-item>
               </v-list>
+              <v-progress-linear
+                indeterminate
+                v-if="item['progress'] !== 100 && item['fail'] === false"
+              ></v-progress-linear>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
@@ -160,9 +164,8 @@ export default {
     keys: [
       { key: "name", label: "视频名" },
       { key: "path", label: "路径" },
-      { key: "complete", label: "完成" },
-      { key: "fail", label: "失败" },
-      { key: "progress", label: "进度" },
+      { key: "complete", label: "是否完成" },
+      { key: "fail", label: "是否失败" },
     ],
   }),
   computed: {

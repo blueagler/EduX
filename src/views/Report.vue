@@ -1,6 +1,35 @@
 <template>
   <div class="rp">
     <Chart :options="chart1.chartOptions" :series="chart1.series"></Chart>
+    <Chart :options="chart2.chartOptions" :series="chart2.series"></Chart>
+    <v-dialog transition="dialog-bottom-transition" max-width="600">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          fab
+          large
+          dark
+          bottom
+          right
+          fixed
+          class="rp"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon>mdi-share</v-icon>
+        </v-btn>
+      </template>
+      <template v-slot:default="dialog">
+        <v-card>
+          <v-toolbar color="primary" dark>分享报告</v-toolbar>
+          <v-card-text>
+            <vue-qrcode :value="shareUrl" class="qr" />
+          </v-card-text>
+          <v-card-actions class="justify-end">
+            <v-btn text @click="dialog.value = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </div>
 </template>
 
@@ -8,18 +37,22 @@
 import VueApexCharts from "vue-apexcharts";
 const CSVToJSON = require("csvtojson");
 import path from "path";
+const fs = require("fs");
+import VueQrcode from "vue-qrcode";
 
-const progressFile = (name) =>
-  `${path.join(process.cwd(), `/resources/yoloface/output/${name}.csv`)}`;
+const getCSV = (name) =>
+  `${path.join(process.cwd(), `/resources/yoloface/outputs/${name}.csv`)}`;
+const getJSON = (name) =>
+  `${path.join(process.cwd(), `/resources/yoloface/outputs/${name}.json`)}`;
 export default {
   name: "Report",
   components: {
     Chart: VueApexCharts,
+    VueQrcode,
   },
   mounted() {
-    console.log(this.$route.params.name);
     CSVToJSON()
-      .fromFile(progressFile(this.$route.params.name))
+      .fromFile(getCSV(this.$route.params.name))
       .then((rd) => {
         this.reportData = rd;
       })
@@ -28,6 +61,16 @@ export default {
       });
   },
   computed: {
+    shareUrl() {
+      let url = `https://cv.blueagle.top/`;
+      url += `?chart1=${encodeURIComponent(
+        JSON.stringify(this.chart1.series)
+      )}`;
+      url += `&chart2=${encodeURIComponent(
+        JSON.stringify(this.chart2.series)
+      )}`;
+      return url;
+    },
     chart1() {
       let [lb, pt, sp, ce] = [[], [], [], []];
       this.reportData.forEach((item) => {
@@ -82,15 +125,57 @@ export default {
           curve: "smooth",
         },
         title: {
-          text: "趋势",
-        },
-        subtitle: {
-          text: "不同时间点里的数据趋势",
+          text: "课堂情绪变化趋势",
         },
         labels: lb,
         xaxis: {
           labels: {
             show: false,
+          },
+        },
+      };
+      return { series, chartOptions };
+    },
+    chart2() {
+      let series = [
+        {
+          name: "百分比",
+          data: [],
+        },
+      ];
+      try {
+        const data = fs.readFileSync(getJSON(this.$route.params.name), "utf8");
+        series[0].data = [
+          parseInt(JSON.parse(data)[0]["a"] * 100),
+          parseInt(JSON.parse(data)[0]["b"] * 100),
+          parseInt(JSON.parse(data)[0]["c"] * 100),
+          parseInt(JSON.parse(data)[0]["d"] * 100),
+          parseInt(JSON.parse(data)[0]["e"] * 100),
+        ];
+      } catch (err) {
+        console.error(err);
+      }
+      let chartOptions = {
+        chart: {
+          type: "radar",
+        },
+        title: {
+          text: "课堂综合评估",
+        },
+        xaxis: {
+          categories: [
+            "两级分化程度",
+            "趣味性",
+            "学生专注度",
+            "难度",
+            "活跃度",
+          ],
+        },
+        dataLabels: {
+          enabled: true,
+          background: {
+            enabled: true,
+            borderRadius: 2,
           },
         },
       };
@@ -104,9 +189,12 @@ export default {
 </script>
 
 <style scoped>
+.qr {
+  max-width: 100%;
+}
 @media (max-width: 600px) {
   .rp {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 56px);
+    margin-bottom: calc(env(safe-area-inset-bottom) + 56px);
   }
 }
 </style>

@@ -1,6 +1,7 @@
 "use strict";
 
 import { app, BrowserWindow, protocol } from "electron";
+const { ipcMain } = require("electron");
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 
@@ -9,7 +10,9 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
-
+ipcMain.on("quit", () => {
+  app.quit();
+});
 async function createWindow() {
   const win = new BrowserWindow({
     width: 599,
@@ -27,8 +30,6 @@ async function createWindow() {
       contextIsolation: false,
     },
   });
-  win.webContents.openDevTools();
-
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
     if (!process.env.IS_TEST) win.webContents.openDevTools();

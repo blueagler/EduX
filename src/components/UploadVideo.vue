@@ -45,7 +45,7 @@
       </v-card>
       <v-card
         class="tb pa-16"
-        style="overflow-y: scroll; width: 100%"
+        style="overflow-y: scroll; width: 100%;display: none"
         v-html="output"
       >
       </v-card>

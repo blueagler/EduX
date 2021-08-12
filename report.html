@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<div>
+  <div id="chart1"></div>
+  <div id="chart2"></div>
+</div>
+<script src="https://cdn.staticfile.org/pako/2.0.4/pako.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+  function getUrlParam(key){
+// 獲取引數
+    var url = window.location.search;
+//window.search 取到的是一串帶引數的字串，如：?p=廣東&c=珠海
+
+// 正則篩選位址列
+    var reg = new RegExp("(^|&)"+ key +"=([^&]*)(&|$)");
+// 匹配目標引數
+    var result = url.substr(1).match(reg);
+//返回引數值
+    return result ? decodeURIComponent(result[2]) : null;
+  }
+  const chart1 = new ApexCharts(document.querySelector("#chart1"), { series: JSON.parse(getUrlParam("chart1")),
+      chart: {
+        type: "area",
+        zoom: {
+          enabled: false,
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        curve: "smooth",
+      },
+      title: {
+        text: "课堂情绪变化趋势",
+      },
+      xaxis: {
+        labels: {
+          show: false,
+        },
+      },
+    });
+  chart1.render();
+  const chart2 = new ApexCharts(document.querySelector("#chart2"), { series: JSON.parse(getUrlParam("chart2")),
+    chart: {
+      type: "radar",
+    },
+    title: {
+      text: "课堂综合评估",
+    },
+    xaxis: {
+      categories: [
+        "两级分化程度",
+        "趣味性",
+        "学生专注度",
+        "难度",
+        "活跃度",
+      ],
+    },
+    dataLabels: {
+      enabled: true,
+      background: {
+        enabled: true,
+        borderRadius: 2,
+      },
+    },
+  });
+  chart2.render();
+</script>
+</body>
+</html>
