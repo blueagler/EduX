@@ -45,7 +45,8 @@
       </v-card>
       <v-card
         class="tb pa-16"
-        style="overflow-y: scroll; width: 100%;display: none"
+        style="overflow-y: scroll; width: 100%; height: 500px"
+        v-if="showDebug"
         v-html="output"
       >
       </v-card>
@@ -54,8 +55,8 @@
 </template>
 
 <script>
+import config from "../config";
 import { mapActions, mapGetters } from "vuex";
-
 export default {
   name: "UploadVideo",
   data: () => ({
@@ -65,6 +66,7 @@ export default {
     ...mapGetters({
       output: "yoloface/getOutput",
     }),
+    showDebug: () => config["debug"],
   },
   methods: {
     ...mapActions({
@@ -74,6 +76,7 @@ export default {
       this.files.forEach((item) => {
         this.addVideo(item);
       });
+      this.$emit("close");
     },
   },
   props: {

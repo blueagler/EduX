@@ -30,6 +30,12 @@ async function createWindow() {
       contextIsolation: false,
     },
   });
+  win.webContents.openDevTools();
+  try {
+    await installExtension(VUEJS_DEVTOOLS);
+  } catch (e) {
+    console.error("Vue Devtools failed to install:", e.toString());
+  }
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
     if (!process.env.IS_TEST) win.webContents.openDevTools();

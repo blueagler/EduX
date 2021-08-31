@@ -52,17 +52,14 @@ export default {
   },
   mounted() {
     CSVToJSON()
-      .fromFile(getCSV(this.$route.params.name))
+      .fromFile(getCSV(this.$route.params.name || "qazwsx"))
       .then((rd) => {
         this.reportData = rd;
-      })
-      .catch((err) => {
-        console.log(err);
       });
   },
   computed: {
     shareUrl() {
-      let url = `https://cv.blueagle.top/`;
+      let url = `https://cv.blueagle.top/qrcodeReport`;
       url += `?chart1=${encodeURIComponent(
         JSON.stringify(this.chart1.series)
       )}`;
@@ -144,7 +141,10 @@ export default {
         },
       ];
       try {
-        const data = fs.readFileSync(getJSON(this.$route.params.name), "utf8");
+        const data = fs.readFileSync(
+          getJSON(this.$route.params.name || "qazwsx"),
+          "utf8"
+        );
         series[0].data = [
           parseInt(JSON.parse(data)[0]["a"] * 100),
           parseInt(JSON.parse(data)[0]["b"] * 100),
@@ -194,7 +194,7 @@ export default {
 }
 @media (max-width: 600px) {
   .rp {
-    margin-bottom: calc(env(safe-area-inset-bottom) + 56px);
+    margin-bottom: 56px;
   }
 }
 </style>

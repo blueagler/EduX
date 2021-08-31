@@ -1,6 +1,7 @@
 const { spawn } = require("child_process");
 import path from "path";
-
+import config from "../config";
+import { genarateId } from "../utils";
 export default {
   namespaced: true,
   state: {
@@ -11,6 +12,7 @@ export default {
         complete: true,
         fail: false,
         progress: 100,
+        timestamp: 0,
       },
     ],
     analysing: null,
@@ -27,7 +29,7 @@ export default {
       state.analysing = value;
     },
     APPEND_OUTPUT(state, value) {
-      state.output += `</br>${value}`;
+      state.output += `${value}</br>`;
     },
   },
   actions: {
@@ -39,71 +41,79 @@ export default {
         complete: false,
         fail: false,
         progress: 0,
+        id: genarateId(10),
+        timestamp: new Date().getTime(),
       });
       commit("SET_VIDEO_LIST", videoList);
-      dispatch("startAnalysis");
+      if (!getters.getAnalysing) {
+        dispatch("startAnalysis");
+      }
     },
     async startAnalysis({ commit, getters, dispatch }) {
       let videoList = getters.getVideoList;
       let waitList = videoList.filter(
         (a) => a["complete"] === false && a["fail"] === false
       );
-
       function success() {
-        videoList[
-          videoList.findIndex((el) => el["name"] === waitList[0]["name"])
-        ]["complete"] = true;
-        videoList[
-          videoList.findIndex((el) => el["name"] === waitList[0]["name"])
-        ]["progress"] = 100;
+        videoList[videoList.findIndex((el) => el["id"] === waitList[0]["id"])][
+          "complete"
+        ] = true;
+        videoList[videoList.findIndex((el) => el["id"] === waitList[0]["id"])][
+          "progress"
+        ] = 100;
         commit("SET_VIDEO_LIST", videoList);
         commit("SET_ANALYSING", null);
-        setTimeout(() => {
+        if (!getters.getAnalysing && waitList.length > 0) {
           dispatch("startAnalysis");
-        }, 3000);
+        }
       }
 
       function error() {
-        videoList[
-          videoList.findIndex((el) => el["name"] === waitList[0]["name"])
-        ]["fail"] = true;
+        videoList[videoList.findIndex((el) => el["id"] === waitList[0]["id"])][
+          "fail"
+        ] = true;
         commit("SET_VIDEO_LIST", videoList);
         commit("SET_ANALYSING", null);
-        setTimeout(() => {
+        if (!getters.getAnalysing && waitList.length > 0) {
           dispatch("startAnalysis");
-        }, 3000);
+        }
       }
 
       if (!getters.getAnalysing && waitList.length > 0) {
+        commit("SET_ANALYSING", waitList[0]["id"]);
         let yoloface = spawn(
-          "python",
+          `${
+            process.platform !== "win32"
+              ? "python3"
+              : `${path.join(
+                  process.cwd(),
+                  "/resources/yoloface/venv/Scripts/python.exe"
+                )}`
+          }`,
           [
-            `${path.join(process.cwd(), "/resources/yoloface/yoloface.py")}`,
+            "yoloface.py",
             `--video=${waitList[0]["path"]}`,
-            `--filename=${waitList[0]["name"]}`,
+            `--filename=${waitList[0]["id"]}`,
           ],
           {
             cwd: `${path.join(process.cwd(), "/resources/yoloface")}`,
           }
         );
         yoloface.stdout.on("data", (data) => {
-          commit("SET_ANALYSING", waitList[0]["name"]);
           if (data.toString().includes("progress:")) {
-            const progress = parseInt(
-              data.toString().substring(data.toString().length - 2)
-            );
-            console.log("Progress data", progress);
             videoList[
-              videoList.findIndex((el) => el["name"] === waitList[0]["name"])
-            ]["progress"] = progress;
+              videoList.findIndex((el) => el["id"] === waitList[0]["id"])
+            ]["progress"] = parseInt(
+              data.toString().substring(data.toString().length - 3)
+            );
             commit("SET_VIDEO_LIST", videoList);
           }
-          commit("APPEND_OUTPUT", `stdout: ${data}`);
+          config["debug"] && commit("APPEND_OUTPUT", `stdout: ${data}`);
         });
         yoloface.stderr.on("data", (data) => {
           if (!data.toString().includes("cv::dnn")) {
             error();
-            commit("APPEND_OUTPUT", `stderr: ${data}`);
+            config["debug"] && commit("APPEND_OUTPUT", `stderr: ${data}`);
           }
         });
         yoloface.on("close", (code) => {
@@ -112,7 +122,8 @@ export default {
           } else {
             error();
           }
-          commit("APPEND_OUTPUT", `child process exited with code ${code}`);
+          config["debug"] &&
+            commit("APPEND_OUTPUT", `child process exited with code ${code}`);
         });
       }
     },

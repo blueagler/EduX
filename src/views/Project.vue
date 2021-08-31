@@ -16,6 +16,7 @@
             <v-toolbar
               :class="`elevation-${hover ? 24 : 12}`"
               class="mb-1 float-toolbar"
+              dark
             >
               <v-toolbar-title>分析中心</v-toolbar-title>
               <v-spacer></v-spacer>
@@ -57,43 +58,42 @@
         <v-row>
           <v-col
             v-for="item in props.items"
-            :key="item.name"
+            :key="item.id"
             cols="12"
             lg="3"
             md="4"
             sm="6"
           >
-            <v-card>
+            <v-card :color="bgColor(item)" dark>
               <v-card-title class="subheading font-weight-bold">
                 {{ item.name }}
               </v-card-title>
 
               <v-divider></v-divider>
-              <v-list dense>
-                <v-list-item v-for="(key, index) in keys" :key="index">
-                  <v-list-item-content
-                    :class="{ 'primary--text': sortBy === key.key }"
-                  >
-                    {{ key.label }}:
-                  </v-list-item-content>
-                  <v-list-item-content
-                    :class="{ 'primary--text': sortBy === key.key }"
-                    class="align-end"
-                  >
-                    {{ item[key.key.toLowerCase()] }}
-                  </v-list-item-content>
-                </v-list-item>
+              <v-list dense flat rounded color="transparent">
+                <v-list-item-group>
+                  <v-list-item v-for="(key, index) in keys" :key="index">
+                    <v-list-item-content>
+                      {{ key.label }}:
+                    </v-list-item-content>
+                    <v-list-item-content class="align-end">
+                      {{ item[key.key.toLowerCase()] }}
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
               </v-list>
               <v-progress-linear
-                indeterminate
-                v-if="item['progress'] !== 100 && item['fail'] === false"
+                :value="item['progress']"
+                v-if="item['id'] === analysing"
+                color="white"
               ></v-progress-linear>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
                   :disabled="!item.complete"
                   text
-                  @click="showReport(item.name)"
+                  @click="showReport(item.id)"
+                  outlined
                 >
                   查看报告
                 </v-btn>
@@ -105,7 +105,7 @@
 
       <template v-slot:footer>
         <v-row align="center" class="bb" justify="center">
-          <span class="grey--text ml-4">每页项目</span>
+          <span class="ml-4 white--text">每页项目</span>
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -133,7 +133,7 @@
 
           <v-spacer></v-spacer>
 
-          <span class="mr-2 grey--text">
+          <span class="mr-2 white--text">
             第 {{ page }} 页, 共 {{ numberOfPages }} 页
           </span>
           <v-btn class="mr-2 bn" dark fab @click="formerPage">
@@ -162,21 +162,35 @@ export default {
     itemsPerPage: 4,
     sortBy: "name",
     keys: [
-      { key: "name", label: "视频名" },
       { key: "path", label: "路径" },
-      { key: "complete", label: "是否完成" },
-      { key: "fail", label: "是否失败" },
+      { key: "id", label: "ID" },
     ],
   }),
   computed: {
     ...mapGetters({
       items: "yoloface/getVideoList",
+      analysing: "yoloface/getAnalysing",
     }),
     numberOfPages() {
       return Math.ceil(this.items.length / this.itemsPerPage);
     },
   },
   methods: {
+    bgColor(item) {
+      if (item["fail"]) {
+        return "red";
+      } else if (item["id"] === this.analysing) {
+        return "blue";
+      } else if (item["complete"]) {
+        return "success";
+      } else {
+        return "grey";
+      }
+    },
+    getime(time = +new Date()) {
+      var date = new Date(time + 8 * 3600 * 1000); // 增加8小时
+      return date.toJSON().substr(0, 19).replace("T", " ");
+    },
     showReport(name) {
       this.$router.push(`/report/${name}`);
     },
@@ -203,17 +217,17 @@ export default {
 
   .float-toolbar {
     position: fixed;
-    top: calc(env(safe-area-inset-top) + 64px + 12px);
+    top: 76px;
     width: 90%;
     left: 5%;
     z-index: 1;
     border-radius: 5px;
     backdrop-filter: saturate(180%) blur(20px);
-    background: #0000002b;
+    background: #0000007d;
   }
 
   .bn {
-    background: #00000061 !important;
+    background: #0000007d !important;
     backdrop-filter: saturate(180%) blur(20px);
   }
 
@@ -227,7 +241,8 @@ export default {
       right: 0;
       margin-left: 0;
       margin-right: 0;
-      bottom: calc(env(safe-area-inset-bottom) + 68px);
+      bottom: 68px;
+      background: #00000040;
       backdrop-filter: saturate(180%) blur(20px);
       padding: 8px;
     }

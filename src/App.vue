@@ -63,12 +63,4 @@ export default {
 ::-webkit-scrollbar {
   display: none;
 }
-@supports (-webkit-touch-callout: none) {
-  .v-main {
-    margin-top: env(safe-area-inset-top) !important;
-    padding-left: env(safe-area-inset-left) !important;
-    padding-right: env(safe-area-inset-right) !important;
-    margin-bottom: env(safe-area-inset-bottom) !important;
-  }
-}
 </style>
